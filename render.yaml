@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: replyfast-ai
+    env: node
+    region: frankfurt
+    plan: starter
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22.13.0
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PRICE_MONTHLY
+        sync: false
+      - key: WAHA_API_URL
+        sync: false
+      - key: WAHA_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_WAHA_API_URL
+        sync: false
+      - key: NEXT_PUBLIC_WAHA_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
