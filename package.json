@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "pnpm run build:css && next build",
-    "build:css": "pnpm exec tailwindcss -i ./styles/globals.css -o ./styles/output.css",
+"build:css": "pnpm tailwindcss -i ./styles/globals.css -o ./styles/output.css",
     "start": "next start",
     "lint": "next lint"
   },
