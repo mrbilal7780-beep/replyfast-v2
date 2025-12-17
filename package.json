@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run build:css && next build",
+    "build": "pnpm run build:css && next build",
     "build:css": "npx tailwindcss -i ./styles/globals.css -o ./styles/output.css",
     "start": "next start",
     "lint": "next lint"
