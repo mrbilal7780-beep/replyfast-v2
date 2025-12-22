@@ -1,6 +1,128 @@
 import Link from 'next/link'
-import { Bot, Zap, Calendar, MessageSquare, BarChart3, Clock, CheckCircle, ArrowRight, Star, Shield, Sparkles } from 'lucide-react'
+import { Bot, Zap, Calendar, MessageSquare, BarChart3, Clock, CheckCircle, ArrowRight, Star, Shield, Sparkles, Volume2, VolumeX } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+
+// Composant pour l'animation du logo lettre par lettre
+const AnimatedLogo = ({ text, className = '' }) => {
+  const [visibleLetters, setVisibleLetters] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setVisibleLetters(prev => {
+        if (prev >= text.length) {
+          setIsComplete(true)
+          clearInterval(timer)
+          return prev
+        }
+        return prev + 1
+      })
+    }, 100)
+
+    return () => clearInterval(timer)
+  }, [text])
+
+  return (
+    <span className={`relative ${className}`}>
+      {text.split('').map((letter, index) => (
+        <span
+          key={index}
+          className={`inline-block transition-all duration-300 ${
+            index < visibleLetters
+              ? 'opacity-100 translate-y-0 scale-100'
+              : 'opacity-0 translate-y-4 scale-50'
+          } ${isComplete ? 'animate-pulse-subtle' : ''}`}
+          style={{
+            transitionDelay: `${index * 50}ms`,
+            textShadow: index < visibleLetters ? '0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)' : 'none'
+          }}
+        >
+          {letter === ' ' ? '\u00A0' : letter}
+        </span>
+      ))}
+      {isComplete && (
+        <span className="absolute -right-2 top-0 w-2 h-full bg-gradient-to-b from-purple-400 to-indigo-400 animate-blink" />
+      )}
+    </span>
+  )
+}
+
+// Grand logo animé futuriste pour la section hero
+const FuturisticLogo = () => {
+  const [isVisible, setIsVisible] = useState(false)
+  const [glowIntensity, setGlowIntensity] = useState(0)
+
+  useEffect(() => {
+    setTimeout(() => setIsVisible(true), 500)
+    
+    const glowInterval = setInterval(() => {
+      setGlowIntensity(prev => (prev + 1) % 100)
+    }, 50)
+
+    return () => clearInterval(glowInterval)
+  }, [])
+
+  const glowOpacity = 0.3 + Math.sin(glowIntensity * 0.1) * 0.2
+
+  return (
+    <div className={`relative transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+      {/* Cercles concentriques animés */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div 
+          className="absolute w-[500px] h-[500px] rounded-full border border-purple-500/20 animate-spin-slow"
+          style={{ animationDuration: '20s' }}
+        />
+        <div 
+          className="absolute w-[400px] h-[400px] rounded-full border border-indigo-500/30 animate-spin-slow"
+          style={{ animationDuration: '15s', animationDirection: 'reverse' }}
+        />
+        <div 
+          className="absolute w-[300px] h-[300px] rounded-full border border-purple-400/40 animate-spin-slow"
+          style={{ animationDuration: '10s' }}
+        />
+      </div>
+
+      {/* Glow effect */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-indigo-600/30 to-purple-600/30 rounded-full blur-3xl"
+        style={{ opacity: glowOpacity }}
+      />
+
+      {/* Logo central */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-[400px]">
+        <div className="w-32 h-32 bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 rounded-3xl flex items-center justify-center shadow-2xl shadow-purple-500/50 mb-8 animate-float">
+          <Bot className="w-16 h-16 text-white" />
+        </div>
+        
+        <div className="text-center">
+          <AnimatedLogo 
+            text="ReplyFast AI" 
+            className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent"
+          />
+          <p className="mt-4 text-xl text-gray-400 animate-fade-in-delayed">
+            L'intelligence artificielle au service de votre business
+          </p>
+        </div>
+
+        {/* Particules flottantes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-purple-400/50 rounded-full animate-float-particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 4}s`
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 // Composant pour les animations au scroll
 const AnimatedSection = ({ children, className = '', delay = 0 }) => {
@@ -134,7 +256,7 @@ const TestimonialCard = ({ name, role, text, rating }) => {
           <Star key={i} className={`w-5 h-5 text-yellow-400 fill-yellow-400 transition-all duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`} style={{ transitionDelay: `${i * 50}ms` }} />
         ))}
       </div>
-      <p className="text-gray-300 mb-6 italic">"{text}"</p>
+      <p className="text-gray-300 mb-6 italic">&quot;{text}&quot;</p>
       <div>
         <p className="font-semibold text-white">{name}</p>
         <p className="text-gray-500 text-sm">{role}</p>
@@ -179,14 +301,14 @@ const PricingCard = ({ name, price, features, popular }) => {
           href="/signup"
           className={`block w-full text-center py-4 rounded-xl font-semibold transition-all duration-300 ${popular ? 'bg-white text-purple-600 hover:bg-gray-100' : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700'} ${isHovered ? 'shadow-2xl shadow-purple-500/30' : ''}`}
         >
-          Commencer l'essai gratuit
+          Commencer l&apos;essai gratuit
         </Link>
       </div>
     </div>
   )
 }
 
-// Particles Background Component (CSS-based)
+// Particles Background Component amélioré
 const ParticlesCSS = () => (
   <div className="fixed inset-0 -z-10 overflow-hidden">
     <div className="absolute inset-0 bg-black" />
@@ -194,14 +316,108 @@ const ParticlesCSS = () => (
     <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse" />
     <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
     <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="absolute top-3/4 left-1/4 w-48 h-48 bg-pink-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }} />
     <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+    
+    {/* Particules flottantes */}
+    <div className="absolute inset-0">
+      {[...Array(30)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 bg-purple-400/30 rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animation: `float-up ${5 + Math.random() * 10}s linear infinite`,
+            animationDelay: `${Math.random() * 5}s`
+          }}
+        />
+      ))}
+    </div>
   </div>
 )
+
+// Bouton d'accessibilité vocale
+const AccessibilityButton = () => {
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false)
+  
+  const toggleVoice = () => {
+    setIsVoiceEnabled(!isVoiceEnabled)
+    if (!isVoiceEnabled) {
+      // Activer la synthèse vocale
+      const utterance = new SpeechSynthesisUtterance('Mode lecture vocale activé. ReplyFast AI, votre assistant intelligent pour WhatsApp Business.')
+      utterance.lang = 'fr-FR'
+      speechSynthesis.speak(utterance)
+    } else {
+      speechSynthesis.cancel()
+    }
+  }
+
+  return (
+    <button
+      onClick={toggleVoice}
+      className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/50 transition-all hover:scale-110"
+      aria-label={isVoiceEnabled ? 'Désactiver la lecture vocale' : 'Activer la lecture vocale'}
+      title={isVoiceEnabled ? 'Désactiver la lecture vocale' : 'Activer la lecture vocale'}
+    >
+      {isVoiceEnabled ? (
+        <VolumeX className="w-6 h-6 text-white" />
+      ) : (
+        <Volume2 className="w-6 h-6 text-white" />
+      )}
+    </button>
+  )
+}
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
       <ParticlesCSS />
+      
+      {/* Styles CSS personnalisés */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        @keyframes float-up {
+          0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes float-particle {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0.5; }
+          25% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+          50% { transform: translateY(-10px) translateX(-10px); opacity: 0.7; }
+          75% { transform: translateY(-30px) translateX(5px); opacity: 0.9; }
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        @keyframes pulse-subtle {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.8; }
+        }
+        @keyframes fade-in-delayed {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-particle { animation: float-particle 5s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-blink { animation: blink 1s step-end infinite; }
+        .animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
+        .animate-fade-in-delayed { animation: fade-in-delayed 1s ease-out 1.5s both; }
+      `}</style>
+      
+      {/* Bouton d'accessibilité */}
+      <AccessibilityButton />
       
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-black/80 backdrop-blur-xl border-b border-gray-800/50 z-50">
@@ -215,6 +431,9 @@ export default function Home() {
             </span>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/faq" className="hidden md:block text-gray-300 hover:text-white font-medium transition-colors">
+              FAQ
+            </Link>
             <Link href="/login" className="text-gray-300 hover:text-white font-medium transition-colors">
               Connexion
             </Link>
@@ -225,27 +444,26 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section avec logo animé */}
       <section className="pt-32 pb-20 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
               <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/30 text-purple-400 px-4 py-2 rounded-full mb-8">
                 <Sparkles className="w-4 h-4" />
-                <span className="text-sm font-semibold">Automatisez vos réponses WhatsApp avec l'IA</span>
+                <span className="text-sm font-semibold">Automatisez vos réponses WhatsApp avec l&apos;IA</span>
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 Votre assistant IA
-                  
-
+                <br />
                 <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
                   disponible 24/7
                 </span>
               </h1>
               
               <p className="text-xl text-gray-400 mb-10 leading-relaxed">
-                ReplyFast AI répond automatiquement à vos clients sur WhatsApp, prend des rendez-vous et booste votre chiffre d'affaires. <span className="text-purple-400 font-semibold">Sans effort.</span>
+                ReplyFast AI répond automatiquement à vos clients sur WhatsApp, prend des rendez-vous et booste votre chiffre d&apos;affaires. <span className="text-purple-400 font-semibold">Sans effort.</span>
               </p>
 
               <div className="flex flex-col sm:flex-row items-start gap-4 mb-10">
@@ -275,11 +493,7 @@ export default function Home() {
             </AnimatedSection>
 
             <AnimatedSection delay={200}>
-              <AnimatedImage
-                src="/hero-bot.png"
-                alt="ReplyFast AI Bot"
-                className="w-full max-w-lg mx-auto"
-              />
+              <FuturisticLogo />
             </AnimatedSection>
           </div>
         </div>
@@ -314,7 +528,7 @@ export default function Home() {
                 <h3 className="text-3xl font-bold">WhatsApp Business</h3>
               </div>
               <p className="text-xl text-gray-400 mb-6 leading-relaxed">
-                Connectez votre WhatsApp Business en <span className="text-green-400 font-semibold">1 clic</span> et laissez l'IA gérer vos conversations automatiquement.
+                Connectez votre WhatsApp Business en <span className="text-green-400 font-semibold">1 clic</span> et laissez l&apos;IA gérer vos conversations automatiquement.
               </p>
               <ul className="space-y-3">
                 {['Connexion instantanée via QR code', 'Réponses automatiques 24/7', 'Personnalisation par secteur'].map((item, i) => (
@@ -337,7 +551,7 @@ export default function Home() {
                 <h3 className="text-3xl font-bold">Prise de RDV Automatique</h3>
               </div>
               <p className="text-xl text-gray-400 mb-6 leading-relaxed">
-                L'IA détecte les demandes de rendez-vous et les planifie <span className="text-purple-400 font-semibold">automatiquement</span> dans votre calendrier.
+                L&apos;IA détecte les demandes de rendez-vous et les planifie <span className="text-purple-400 font-semibold">automatiquement</span> dans votre calendrier.
               </p>
               <ul className="space-y-3">
                 {['Détection intelligente des demandes', 'Gestion des créneaux disponibles', 'Rappels automatiques'].map((item, i) => (
@@ -401,7 +615,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatedSection delay={0}><FeatureCard icon={Bot} title="IA Ultra Intelligente" description="GPT-4o comprend vos clients et répond comme un humain." color="blue" /></AnimatedSection>
             <AnimatedSection delay={100}><FeatureCard icon={Clock} title="Disponible 24/7" description="Votre bot ne dort jamais. Répondez même la nuit." color="indigo" /></AnimatedSection>
-            <AnimatedSection delay={200}><FeatureCard icon={Zap} title="Réponse Instantanée" description="Temps de réponse < 1 seconde. Zéro attente." color="yellow" /></AnimatedSection>
+            <AnimatedSection delay={200}><FeatureCard icon={Zap} title="Réponse Instantanée" description="Temps de réponse inférieur à 1 seconde. Zéro attente." color="yellow" /></AnimatedSection>
           </div>
         </div>
       </section>
@@ -454,7 +668,7 @@ export default function Home() {
               Tarifs <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">simples</span>
             </h2>
             <p className="text-xl text-gray-400">
-              30 jours d'essai gratuit • Sans engagement
+              30 jours d&apos;essai gratuit • Sans engagement
             </p>
           </AnimatedSection>
 
@@ -518,8 +732,8 @@ export default function Home() {
             </p>
             <div className="flex items-center gap-6 text-gray-400 text-sm">
               <Link href="/privacy" className="hover:text-white transition-colors">Confidentialité</Link>
-              <Link href="/terms" className="hover:text-white transition-colors">CGU</Link>
-              <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+              <Link href="/cgu" className="hover:text-white transition-colors">CGU</Link>
+              <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
             </div>
           </div>
         </div>

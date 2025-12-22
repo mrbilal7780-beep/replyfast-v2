@@ -150,7 +150,7 @@ export default function CGU() {
                   <strong>5.1 Droit de rétractation :</strong> Conformément à l'article L221-18 du Code de la consommation, vous disposez d'un délai de 14 jours à compter de la souscription pour exercer votre droit de rétractation sans avoir à justifier de motifs ni à payer de pénalités.
                 </p>
                 <p>
-                  <strong>5.2 Résiliation par l'utilisateur :</strong> Vous pouvez résilier votre abonnement à tout moment depuis votre tableau de bord (Paramètres > Abonnement > Annuler l'abonnement). La résiliation prend effet à la fin de la période de facturation en cours. Aucun remboursement au prorata ne sera effectué.
+                  <strong>5.2 Résiliation par l'utilisateur :</strong> Vous pouvez résilier votre abonnement à tout moment depuis votre tableau de bord (Paramètres &gt; Abonnement &gt; Annuler l'abonnement). La résiliation prend effet à la fin de la période de facturation en cours. Aucun remboursement au prorata ne sera effectué.
                 </p>
                 <p>
                   <strong>5.3 Résiliation par ReplyFast AI :</strong> ReplyFast AI peut résilier votre abonnement en cas de violation des CGU, d'utilisation frauduleuse, ou de non-paiement, après notification par email et délai de régularisation de 7 jours.

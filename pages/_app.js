@@ -1,16 +1,35 @@
 import '../styles/globals.css'
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
 import { useRouter } from 'next/router'
+
+// Import supabase dynamically to avoid build-time errors
+let supabase = null
+if (typeof window !== 'undefined') {
+  import('../lib/supabase').then((module) => {
+    supabase = module.supabase
+  })
+}
 
 function MyApp({ Component, pageProps }) {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [supabaseClient, setSupabaseClient] = useState(null)
   const router = useRouter()
 
+  // Initialize supabase on client side
   useEffect(() => {
+    const initSupabase = async () => {
+      const { supabase: client } = await import('../lib/supabase')
+      setSupabaseClient(client)
+    }
+    initSupabase()
+  }, [])
+
+  useEffect(() => {
+    if (!supabaseClient) return
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setLoading(false)
     })
@@ -18,19 +37,19 @@ function MyApp({ Component, pageProps }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabaseClient.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setLoading(false)
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabaseClient])
 
   // Redirect logic
   useEffect(() => {
     if (loading) return
 
-    const publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/reset-password']
+    const publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/reset-password', '/cgu', '/privacy', '/faq']
     const isPublicRoute = publicRoutes.includes(router.pathname)
 
     if (!session && !isPublicRoute) {

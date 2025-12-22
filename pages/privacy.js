@@ -402,7 +402,7 @@ export default function Privacy() {
                     Pour exercer vos droits, vous pouvez :
                   </p>
                   <ul className="list-disc list-inside space-y-2 ml-4">
-                    <li>Accéder directement à votre tableau de bord (Paramètres > Confidentialité)</li>
+                    <li>Accéder directement à votre tableau de bord (Paramètres &gt; Confidentialité)</li>
                     <li>Nous envoyer un email à <strong>privacy@replyfast.ai</strong></li>
                     <li>Nous écrire par courrier à : ReplyFast AI, Service Protection des Données, Paris, France</li>
                   </ul>
