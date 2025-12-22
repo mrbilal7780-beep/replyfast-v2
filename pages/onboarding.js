@@ -77,12 +77,13 @@ export default function Onboarding({ session }) {
         .single()
 
       if (client) {
+        const businessInfo = client.business_info || {}
         setFormData(prev => ({
           ...prev,
           companyName: client.company_name || '',
           sector: client.sector || '',
-          address: client.address || '',
-          phone: client.phone || '',
+          address: businessInfo.address || '',
+          phone: businessInfo.phone || '',
           horaires: client.horaires || prev.horaires
         }))
       }
@@ -124,6 +125,12 @@ export default function Onboarding({ session }) {
         throw checkError
       }
 
+      // Stocker les infos business dans un objet JSON
+      const businessInfo = {
+        address: formData.address,
+        phone: formData.phone
+      }
+
       let result
       if (existingClient) {
         // Update existing client
@@ -132,11 +139,9 @@ export default function Onboarding({ session }) {
           .update({
             sector: formData.sector,
             company_name: formData.companyName,
-            address: formData.address,
-            phone: formData.phone,
+            business_info: businessInfo,
             horaires: formData.horaires,
-            profile_completed: false, // Sera true après waha-setup
-            updated_at: new Date().toISOString()
+            profile_completed: false // Sera true après waha-setup
           })
           .eq('email', session.user.email)
       } else {
@@ -147,12 +152,11 @@ export default function Onboarding({ session }) {
             email: session.user.email,
             sector: formData.sector,
             company_name: formData.companyName,
-            address: formData.address,
-            phone: formData.phone,
+            business_info: businessInfo,
             horaires: formData.horaires,
             subscription_status: 'trialing',
             trial_ends_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            profile_completed: false,
+            profile_completed: false
           }])
       }
 
